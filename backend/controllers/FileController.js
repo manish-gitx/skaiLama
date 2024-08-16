@@ -15,8 +15,16 @@ export const createFile = async (req, res) => {
       fileDescription,
     });
 
-    // Update the project's updatedAt timestamp
-    await Project.findByIdAndUpdate(projectId, {}, { new: true, timestamps: true });
+    // Update the project's updatedAt timestamp and increment fileCount in one operation
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      { $inc: { fileCount: 1 } },
+      { new: true, timestamps: true }
+    );
+
+    if (!updatedProject) {
+      throw new Error('Project not found');
+    }
 
     res.status(200).json({ success: true, message: "file created", doc });
   } catch (error) {
@@ -93,18 +101,23 @@ export const createFile = async (req, res) => {
   export const deleteFile = async (req, res) => {
     try {
       const { projectId, fileId } = req.params;
-  
-  
-      const doc = await File.deleteOne({
+
+      const deletedFile = await File.findOneAndDelete({
         _id: fileId,
         projectId: projectId
       });
-  
-  
-      res.status(200).json({ success: true, message: "file deleted", doc });
+
+      if (!deletedFile) {
+        return res.status(404).json({ success: false, message: "File not found" });
+      }
+
+      // Decrement the fileCount of the project
+      await Project.findByIdAndUpdate(projectId, { $inc: { fileCount: -1 } });
+
+      res.status(200).json({ success: true, message: "file deleted", doc: deletedFile });
     } catch (error) {
-      console.error(`Error in project controlller :`, error);
-      throw new Error(`Failed in project Controller: ${error.message}`);
+      console.error(`Error in file controller:`, error);
+      res.status(500).json({ success: false, message: `Failed in file controller: ${error.message}` });
     }
   };
   

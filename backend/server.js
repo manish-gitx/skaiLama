@@ -1,15 +1,14 @@
-import express from 'express'
+import express from "express"
 import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
-import routes from './routes/index.js';  // Make sure .js is included
-
+import router from './routes/index.js';
 
 // Initializing the environment configurations required for the project
-// dotenv.config();
+dotenv.config();
 
 // Connecting to the database
-import './config/dbConfig.js';
+import './config/database.js';
 
 const app = express();
 
@@ -22,14 +21,13 @@ app.use(cookieParser());
 // Adding CORS security
 app.use(
   cors({
-    origin: '*',
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: '*', // Update this to your frontend URL
     credentials: true,
   })
 );
 
 // Routes
-app.use('/api', routes );
+app.use('/api', router);
 
 // 404 Not Found middleware
 app.use((req, res, next) => {
@@ -39,19 +37,17 @@ app.use((req, res, next) => {
   });
 });
 
-// Use error handling middleware
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    
-    res.status(err.status || 500).json({
-      error: {
-        message: err.message,
-        status: err.status || 500
-      }
-    });
-  });
+  console.error(err.stack);
   
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message,
+      status: err.status || 500
+    }
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
