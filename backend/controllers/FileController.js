@@ -1,26 +1,29 @@
 import mongoose from "mongoose";
 import File from "../models/fileSchema.js";
+import Project from "../models/projectSchema.js";
 //upload file
 export const createFile = async (req, res) => {
-    try {
-      const { userId } = req?.decodedUser;
-      const { projectId } = req.params;
-      const { fileName, fileDescription } = req.body;
-  
-      const doc = await File.create({
-        userId: userId,
-        projectId: projectId,
-        fileName,
-        fileDescription,
-      });
-  
-      res.status(200).json({ success: true, message: "file created", doc });
-    } catch (error) {
-      console.error(`Error in project controlller :`, error);
-      throw new Error(`Failed in project Controller: ${error.message}`);
-    }
-  };
-  
+  try {
+    const { userId } = req?.decodedUser;
+    const { projectId } = req.params;
+    const { fileName, fileDescription } = req.body;
+
+    const doc = await File.create({
+      userId: userId,
+      projectId: projectId,
+      fileName,
+      fileDescription,
+    });
+
+    // Update the project's updatedAt timestamp
+    await Project.findByIdAndUpdate(projectId, {}, { new: true, timestamps: true });
+
+    res.status(200).json({ success: true, message: "file created", doc });
+  } catch (error) {
+    console.error(`Error in file controller:`, error);
+    res.status(500).json({ success: false, message: `Failed in file controller: ${error.message}` });
+  }
+};
   // fetching files
   export const fetchFiles = async (req, res) => {
     try {

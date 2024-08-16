@@ -12,6 +12,10 @@ const ProjectSchema = new Schema({
     type: String,
     required: true,
     trim: true
+  },
+  fileCount: {
+    type: Number,
+    default: 0
   }
 }, { timestamps: true }); 
 

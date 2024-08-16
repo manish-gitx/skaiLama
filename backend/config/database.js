@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 
 
 //connecting mongodb
-mongoose.connect("mongodb+srv://mansih:8Mmanish12@cluster0.tebut1m.mongodb.net/")
+mongoose.connect(process.env.MONGODB_URL)
   .then(() => {
     console.log("MongoDB connected");
   })
