@@ -1,4 +1,4 @@
-const BACKENDURL="https://skailama-production.up.railway.app"
+const BACKENDURL="http://localhost:3005"
 export{
     BACKENDURL
 }
