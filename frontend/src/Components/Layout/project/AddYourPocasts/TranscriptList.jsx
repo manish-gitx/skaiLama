@@ -1,7 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-const TranscriptList = ({ files }) => {
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { BACKENDURL } from "../../../../config/BackendUrl";
+import { config } from "../../../../config/config";
+const TranscriptList = ({ files,setFiles }) => {
+  const { projectId } = useParams();
+  const handleDelete = async (fileId) => {
+    try {
+      await axios.delete(`${BACKENDURL}/api/file/${projectId}/${fileId}`, config);
+     setFiles(files.filter(file => file._id !== fileId));
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  };
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
@@ -24,22 +36,23 @@ const TranscriptList = ({ files }) => {
         </thead>
         <tbody className="">
           {files.map((file, index) => (
-            <tr key={file.id} className="border-b ">
+            <tr key={file._id} className="border-b ">
               <td className="px-4 py-4 text-sm text-gray-700">{index + 1}</td>
-              <td className="text-sm text-gray-700">{file.name}</td>
-              <td className="text-sm text-gray-700">{file.uploadDate}</td>
+              <td className="text-sm text-gray-700">{file.fileName}</td>
+              <td className="text-sm text-gray-700">{new Date(file.createdAt).toLocaleString()}</td>
               <td className="px-4  py-4">
                 <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-purple-200 text-purple-700">
-                  Done
+                  {file.status}
                 </span>
               </td>
               <td className="px-4  py-4">
-                <Link to={`file/${file.id}`}>
+                <Link to={`file/${file._id}`}>
                   <button className="text-blue-500 hover:underline mr-4">
                     View
                   </button>
                 </Link>
-                <button className="text-red-500 hover:underline">Delete</button>
+                <button className="text-red-500 hover:underline" 
+                onClick={() => handleDelete(file._id)}>Delete</button>
               </td>
             </tr>
           ))}

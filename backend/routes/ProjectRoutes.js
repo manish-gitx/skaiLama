@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyUser } from '../middleware/verifyUser.js';
+import { verifyUser } from '../middleware/auth.middleware.js';
 import { createProject , fetchProjects , fetchProject }from  '../controllers/ProjectController.js'
 
 const router = express.Router();
@@ -14,7 +14,7 @@ export default router;
 
 // GET http://localhost:3000/project
 // POST http://localhost:3000/project/create
-// GET http://localhost:3000/project/:projectId
+// GET http://localhost:3000/project/:projectId //not useful
 
 // POST http://localhost:3000/file/:projectId
 // GET http://localhost:3000/file/:projectId

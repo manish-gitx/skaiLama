@@ -25,6 +25,7 @@ export const createProject = async (req, res) => {
   export const fetchProjects = async (req, res) => {
     try {
       const { userId } = req?.decodedUser;
+      console.log("here to fetch")
   
       const projectData = await Project.find({
         userId: userId,

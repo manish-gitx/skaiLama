@@ -21,11 +21,11 @@ function ProjectList({ projects, handleOpenModal }) {
       <div className="mt-16 grid  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {projects.map((project) => (
           <ProjectCard
-            key={project.id} // Assuming each project has a unique id
-            title={project.title}
-            episodes={project.episodes}
-            lastedited={project.lastedited}
-            onClick={() => handleProjectClick(project.id)}
+            key={project._id}
+            title={project.projectName}
+            episodes={project.fileCount}
+            lastedited={project.updatedAt}
+            onClick={() => handleProjectClick(project._id)}
           />
         ))}
       </div>

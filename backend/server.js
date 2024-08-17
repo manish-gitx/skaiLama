@@ -3,52 +3,46 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import router from './routes/index.js';
+import connectToDatabase from "./config/database.js";
 
-// Initializing the environment configurations required for the project
 dotenv.config();
 
-// Connecting to the database
-import './config/database.js';
-
 const app = express();
-
-const port = 3005;
+const port = process.env.PORT || 3000;
 
 // Helper middlewares
 app.use(express.json());
 app.use(cookieParser());
 
-// Adding CORS security
+// CORS managed
 app.use(
   cors({
-    origin: '*', // Update this to your frontend URL
+    origin: 'http://localhost:3000', // Update this to your frontend URL
     credentials: true,
   })
 );
 
-// Routes
 app.use('/api', router);
 
-// 404 Not Found middleware
-app.use((req, res, next) => {
+// Catch all other Routes
+app.all('*', (req, res) => {
   res.status(404).json({
     status: 'error',
-    message: 'Not Found'
+    message: 'Resource not found'
   });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  
-  res.status(err.status || 500).json({
-    error: {
-      message: err.message,
-      status: err.status || 500
-    }
-  });
-});
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+async function startServer() {
+  try {
+    await connectToDatabase();
+    app.listen(port, () => {
+      console.log(`Server started on port: ${port}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();

@@ -1,63 +1,56 @@
-import React, { useState } from "react";
+
 import Navbar from "../Components/Layout/home/Navbar";
 import Default from "../Components/Layout/home/Default";
 import Modal from "../Components/ui/Modal";
 import Button from "../Components/ui/Button";
 import ProjectList from "../Components/Layout/home/ProjectList";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import axios from "axios";
+import { BACKENDURL } from "../config/BackendUrl";
+import { config } from "../config/config";
+
+
+
 
 function Home() {
-    let projects = [
-      {
-        id: 1,
-        title: "Project 1",
-        episodes: 5,
-      },
-      {
-        id: 2,
-        title: "Project 2",
-        episodes: 4,
-      },
-      {
-        id: 3,
-        title: "Project 3",
-        episodes: 1,
-      },
-      {
-        id: 4,
-        title: "Project 4",
-        episodes: 3,
-      },
-      {
-        id: 5,
-        title: "Project 5",
-        episodes: 2,
-      },
-      {
-        id: 6,
-        title: "Project 6",
-        episodes: 6,
-      },
-      {
-        id: 7,
-        title: "Project 7",
-        episodes: 7,
-      },
-      {
-        id: 8,
-        title: "Project 8",
-        episodes: 8,
-      },
-      {
-        id: 9,
-        title: "Project 9",
-        episodes: 9,
-      },
-      {
-        id: 10,
-        title: "Project 10",
-        episodes: 10,
-      },
-    ];
+  const { user } = useAuth();
+  const[newProjectName,setNewProjectName]=useState("")
+
+  const handleCreateProject = async () => {
+
+    if (!newProjectName.trim()) {
+      return;
+    }
+  
+    try {
+      const response = await axios.post(`${BACKENDURL}/api/project/create`, { projectName: newProjectName }, config);
+      setProjects([...projects, response.data.doc]);
+      setNewProjectName('');
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error creating project:', error);
+     
+    }
+  };
+
+  const[projects,setProjects]=useState([])
+
+        useEffect(() => {
+        const fetchProjects = async () => {
+            if (user) {
+                try {
+                    const response = await axios.get(`${BACKENDURL}/api/project`, config);
+                   
+                    setProjects(response.data.data)
+                } catch (error) {
+                    console.error('Error fetching projects:', error);
+                }
+            }
+        };
+
+        fetchProjects();
+    }, [user]);
   
     const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -90,6 +83,8 @@ function Home() {
             >
               <div>
                 <input
+                  onChange={(e) => setNewProjectName(e.target.value)}
+                  value={newProjectName}
                   type="text"
                   placeholder="Enter Project Name"
                   className="w-full p-2 border border-gray-300 rounded-md"
@@ -105,7 +100,7 @@ function Home() {
                 >
                   Cancel
                 </button>
-                <Button className={"py-2"}>Create</Button>
+                <Button className={"py-2"} onClick={handleCreateProject}>Create</Button>
               </div>
             </Modal>
           </div>

@@ -1,7 +1,7 @@
 
 
 import express from 'express';
-import { verifyUser } from '../middleware/verifyUser.js';
+import { verifyUser } from '../middleware/auth.middleware.js';
 import { createFile , fetchFiles , fetchFile , editFile , deleteFile } from  '../controllers/FileController.js'
 
 const router = express.Router();

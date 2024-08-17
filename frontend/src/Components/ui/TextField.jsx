@@ -1,12 +1,14 @@
 import React from "react";
 
-function TextField({placeholder}) {
+function TextField({placeholder, type, value, onChange}) {
   return (
     <div>
       <input
-        type="email"
+        type={type}
         placeholder={placeholder}
-        class="w-full px-4 py-4 mt-6 border bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+        value={value}
+        onChange={onChange}
+        className="w-full px-4 py-4 mt-6 border bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
       />
     </div>
   );

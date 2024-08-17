@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+
 import Card from "./Card";
 import Youtube from "../../../../assets/ProjectPage/Youtube.svg";
 import RSS from "../../../../assets/ProjectPage/RSSFeed.svg";
@@ -7,25 +7,33 @@ import DefaultBanner from "./DefaultBanner";
 import TranscriptList from "./TranscriptList";
 import Modal from "../../../ui/Modal";
 import TextBox from "../../../ui/TextBox";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { BACKENDURL } from "../../../../config/BackendUrl";
+import { config } from "../../../../config/config";
+
+
 
 function AddYourPodcasts() {
-  const filesData = [
-    {
-      id: 1,
-      name: "THE SIDEPOD S2 EPISODE 15",
-      uploadDate: "25 Oct 23 | 09:04",
-    },
-    {
-      id: 2,
-      name: "THE SIDEPOD S2 EPISODE 17",
-      uploadDate: "27 Oct 23 | 11:08",
-    },
-    {
-      id: 3,
-      name: "THE SIDEPOD S2 EPISODE 20",
-      uploadDate: "31 Oct 23 | 20:28",
-    },
-  ];
+  const [filesData, setFiles] = useState([]);
+  const { projectId } = useParams();
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const response = await axios.get(`${BACKENDURL}/api/file/${projectId}`, config);
+        console.log(response.data.data)
+        setFiles(response.data.data);
+      } catch (error) {
+        console.error('Error fetching files:', error);
+      }
+    };
+
+    fetchFiles();
+  }, [projectId]);
+
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
@@ -40,9 +48,28 @@ function AddYourPodcasts() {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = () => {
-    // API call
-    setIsModalOpen(false);
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post(
+        `${BACKENDURL}/api/file/${projectId}`,
+        {
+          fileName: name,
+          fileDescription: transcript
+        },
+        config
+      );
+  
+      if (response.data.success) {
+        setFiles([...filesData, response.data.doc]);
+        setName("");
+        setTranscript("");
+        setIsModalOpen(false);
+      } else {
+        console.error("Failed to create file:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error creating file:", error);
+    }
   };
 
   return (
@@ -78,9 +105,9 @@ function AddYourPodcasts() {
         />
       </div>
       {filesData.length === 0 ? (
-        <DefaultBanner />
+         <DefaultBanner handleOpenModal={handleOpenModal} />
       ) : (
-        <TranscriptList files={filesData} />
+        <TranscriptList files={filesData} setFiles={setFiles} />
       )}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={title}>
         <div className="flex flex-col gap-6">

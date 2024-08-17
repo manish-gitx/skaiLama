@@ -1,19 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { BACKENDURL } from "../../../../config/BackendUrl";
+import { config } from "../../../../config/config";
 
 function TranscriptEditor() {
   const [isEditing, setIsEditing] = useState(false);
+  const [text, setText] = useState("");
+  const { projectId, fileId } = useParams();
+  const navigate = useNavigate();
 
-  const [text, setText] =
-    useState(`Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. 
-  Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
-  Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-  
-  Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. 
-  Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.`);
+  // ... existing state and other code
 
-  const handleEditClick = () => {
-    setIsEditing(!isEditing);
+  const handleBackClick = () => {
+    navigate(`/projects/${projectId}`);
+  };
+
+  useEffect(() => {
+    fetchFileData();
+  }, []);
+
+  const fetchFileData = async () => {
+    try {
+      const response = await axios.get(`${BACKENDURL}/api/file/${projectId}/${fileId}`,config);
+      setText(response.data.data.fileDescription);
+    } catch (error) {
+      console.error("Error fetching file data:", error);
+    }
+  };
+
+  const handleEditClick = async () => {
+    if (isEditing) {
+      try {
+        await axios.put(`${BACKENDURL}/api/file/${projectId}/${fileId}`, {
+          fileDescription: text
+        },config);
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Error updating file:", error);
+      }
+    } else {
+      setIsEditing(true);
+    }
   };
 
   return (
@@ -21,7 +50,7 @@ function TranscriptEditor() {
       <div className="w-[90%] h-[90%] p-4">
         <div className="flex justify-between items-center pb-4">
           <div className="flex items-center">
-            <button className="pl-2 pr-4 scale-125">
+            <button onClick={handleBackClick}  className="pl-2 pr-4 scale-125">
               <FaArrowLeft />
             </button>
             <div className="text-2xl font-medium tracking-wider">
@@ -31,7 +60,7 @@ function TranscriptEditor() {
           <div className="flex justify-center items-center gap-8">
             {isEditing && (
               <button
-                onClick={handleEditClick}
+                onClick={() => setIsEditing(false)}
                 className=" min-w-36  text-red-600 border border-red-600 font-semibold rounded px-10 py-3 hover:bg-red-100 "
               >
                 Cancel
