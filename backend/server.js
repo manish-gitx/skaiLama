@@ -15,12 +15,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS managed
-app.use(
-  cors({
-    origin: 'http://localhost:3000', // Update this to your frontend URL
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
 app.use('/api', router);
 

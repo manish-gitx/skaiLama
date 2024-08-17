@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link,  useParams } from 'react-router-dom';
 
 function BreadCrumb() {
-  const location = useLocation();
   const { projectId, fileId } = useParams();
   const [breadcrumbItems, setBreadcrumbItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +24,7 @@ function BreadCrumb() {
       setBreadcrumbItems(items);
       setIsLoading(false);
     }, 300); // Simulate a short delay for smooth transition
-  }, [location.pathname]);
+  }, [projectId, fileId]);
 
   return (
     <nav className="text-xl">

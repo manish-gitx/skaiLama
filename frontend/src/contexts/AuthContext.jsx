@@ -1,10 +1,9 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect} from 'react';
 import axios from 'axios';
 import { config } from '../config/config';
 import { BACKENDURL } from '../config/BackendUrl';
 
 const AuthContext = createContext();
-console.log(config)
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -14,7 +13,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     verifyUser();
-    console.log(user)
   }, []);
 
   const verifyUser = async () => {

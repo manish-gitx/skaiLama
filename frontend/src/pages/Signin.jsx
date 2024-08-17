@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import LoginIntro from "../Components/Layout/Login/LoginIntro";
@@ -8,8 +8,15 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, user} = useAuth();
   const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(user){
+      navigate("/")
+    }
+
+  },[])
 
   const handleSubmit = async (e) => {
     e.preventDefault();

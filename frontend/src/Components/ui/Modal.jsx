@@ -17,8 +17,6 @@ function Modal({ isOpen, onClose, children, title }) {
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      console.log("cleanup");
-      console.log(isOpen);
     };
   }, [isOpen, onClose]);
 
