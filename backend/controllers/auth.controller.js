@@ -31,7 +31,6 @@ export const signup = async (req, res) => {
   };
 
   export const login = async (req, res) => {
-    console.log(req.body)
     try {
       const { email, password } = req.body;
   
@@ -49,8 +48,9 @@ export const signup = async (req, res) => {
   
       res.cookie('token', token, {
         httpOnly: true,
-        sameSite: 'strict',
-        maxAge: 3600000
+        secure: true, 
+        sameSite: 'none', 
+        maxAge: 3600000 
       });
   
       res.status(200).json({ message: 'Logged in successfully', userId: user._id });
