@@ -1,8 +1,9 @@
-
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ReactSVG } from "react-svg";
+import axios from "axios";
+import { BACKENDURL } from "../../../../config/BackendUrl";
+import { config } from "../../../../config/config";
 import Logo from "../../../../assets/QuesLogoPurple.svg";
 import { PiCurrencyDollarSimple } from "react-icons/pi";
 import { HiPlus, HiOutlineSquare2Stack } from "react-icons/hi2";
@@ -15,7 +16,20 @@ import Divider from "../../../ui/Divider";
 function Sidebar() {
   const { projectId } = useParams();
   const [currentScreen, setCurrentScreen] = useState("Add your Podcast(s)");
+  const [userData, setUserData] = useState({ userName: "", email: "" });
 
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${BACKENDURL}/api/user/fetch`, config);
+      setUserData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   const handleButtonClick = (label) => {
     setCurrentScreen(label);
@@ -84,8 +98,8 @@ function Sidebar() {
                 className="w-16 h-16"
               />
               <div className="text-left pl-3">
-                <p className="max-w-40">manish</p>
-                <p className="max-w-40">manish@gmail.com</p>
+                <p className="max-w-40">{userData.userName}</p>
+                <p className="max-w-40">{userData.email}</p>
               </div>
             </div>
           </Link>
