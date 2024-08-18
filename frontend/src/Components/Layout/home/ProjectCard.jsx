@@ -1,6 +1,10 @@
 import React from "react";
+import { formatDate } from "../../../utils/dataFormat";
 
 function ProjectCard({ title, episodes, lastedited, onClick }) {
+  // Function to format the dat
+  
+
   return (
     <div className=" max-w-72 flex items-center bg-white border border-gray-300 rounded-2xl p-4 shadow-md hover:shadow-lg transition-shadow duration-300" onClick={() => (onClick())}>
       {/* Project Icon */}
@@ -12,7 +16,7 @@ function ProjectCard({ title, episodes, lastedited, onClick }) {
           {title}
         </h3>
         <p className="text-gray-600 text-xs">{episodes} Episodes</p>
-        <p className="text-gray-400 text-sm mt-2">{lastedited}</p>
+        <p className="text-gray-400 text-sm mt-2">{formatDate(lastedited)}</p>
       </div>
     </div>
   );

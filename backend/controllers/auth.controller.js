@@ -45,11 +45,11 @@ export const signup = async (req, res) => {
       }
   
       const token = generateToken(user._id);
-  
+
       res.cookie('token', token, {
         httpOnly: true,
-        secure: true, 
-        sameSite: 'none', 
+        secure: 'production',
+        sameSite: 'none',
         maxAge: 3600000 
       });
   

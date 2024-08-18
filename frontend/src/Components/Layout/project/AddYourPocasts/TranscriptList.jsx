@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { BACKENDURL } from "../../../../config/BackendUrl";
-import { config } from "../../../../config/config";
+import { config } from "../../../../config/config"
+import { formatDate } from "../../../../utils/dataFormat";
 const TranscriptList = ({ files,setFiles }) => {
   const { projectId } = useParams();
   const handleDelete = async (fileId) => {
@@ -39,7 +40,7 @@ const TranscriptList = ({ files,setFiles }) => {
             <tr key={file._id} className="border-b ">
               <td className="px-4 py-4 text-sm text-gray-700">{index + 1}</td>
               <td className="text-sm text-gray-700">{file.fileName}</td>
-              <td className="text-sm text-gray-700">{new Date(file.createdAt).toLocaleString()}</td>
+              <td className="text-sm text-gray-700">{formatDate(file.createdAt)}</td>
               <td className="px-4  py-4">
                 <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-purple-200 text-purple-700">
                   {file.status}
